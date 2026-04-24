@@ -1,0 +1,25 @@
+2026-04-24 13:18:11 | INFO | === FORENSIC SESSION STARTED ===
+2026-04-24 13:18:30 | INFO | [+] Loaded: E:/Shanzay/Sem 6/Digital Forensics/MBR-Integrity-Verifier-and-Recovery-Tool-DFSemProject-main/images/mbr_test.vhd
+2026-04-24 13:18:35 | INFO | 
+\U0001f7e2 MBR STATUS: OK
+2026-04-24 13:18:35 | INFO | Boot Hash: 59019b8b59cffb325855cdc7716d38f8ce2112b9b027f2f8516992e2e686525b
+2026-04-24 13:18:35 | INFO | Partition Table Hash: 9964173eba57c6cdf76a14843d7d8c197c66de18d3921a09751a5bddc19b3625
+2026-04-24 13:18:35 | INFO | Boot OK: True
+2026-04-24 13:18:35 | INFO | Partition Table OK: True
+2026-04-24 13:18:44 | WARNING | [!] MBR corrupted (simulation)
+2026-04-24 13:18:47 | INFO | 
+\U0001f534 MBR STATUS: CORRUPTED
+2026-04-24 13:18:47 | INFO | Boot Hash: 0cdfb6d056c96b56a5aaa40b4776ca8a6078da7877b36458831f8389903db48d
+2026-04-24 13:18:47 | INFO | Partition Table Hash: 9964173eba57c6cdf76a14843d7d8c197c66de18d3921a09751a5bddc19b3625
+2026-04-24 13:18:47 | INFO | Boot OK: False
+2026-04-24 13:18:47 | INFO | Partition Table OK: True
+2026-04-24 13:18:55 | INFO | 
+[RECOVERY] MBR boot code restored successfully
+2026-04-24 13:18:56 | INFO | 
+\U0001f7e2 MBR STATUS: OK
+2026-04-24 13:18:56 | INFO | Boot Hash: 59019b8b59cffb325855cdc7716d38f8ce2112b9b027f2f8516992e2e686525b
+2026-04-24 13:18:56 | INFO | Partition Table Hash: 9964173eba57c6cdf76a14843d7d8c197c66de18d3921a09751a5bddc19b3625
+2026-04-24 13:18:56 | INFO | Boot OK: True
+2026-04-24 13:18:56 | INFO | Partition Table OK: True
+2026-04-24 13:20:23 | INFO | === FORENSIC SESSION STARTED ===
+2026-04-24 13:20:26 | INFO | [*] Application closed by user

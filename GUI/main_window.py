@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter import ttk
 
+from matplotlib import text
+
 from core.disk_reader import (
     read_mbr_from_image,
     read_gpt_header_from_image,
@@ -18,6 +20,7 @@ from core.mbr_parser import extract_boot_code, extract_partition_table_raw, pars
 from core.gpt_parser import parse_gpt_header
 from core.integrity_checker import check_mbr_integrity, check_gpt_integrity
 from Report.report_generator import generate_pdf_report
+from core.log import setup_logger, write_log
 
 
 class MainWindow:
@@ -30,6 +33,7 @@ class MainWindow:
         self.image_path = None
         self.mode = "image"
         self.last_results = {}
+        setup_logger()
 
         # ─────────────────────────────
         # TOP TITLE
@@ -83,6 +87,8 @@ class MainWindow:
         btn("Recover MBR Partition Table", self.recover_mbr_partition).pack(pady=5)
         btn("Recover GPT Partition Table", self.recover_gpt_partition_table_from_backup).pack(pady=5)
         btn("Generate Report", self.generate_report).pack(pady=5)
+        btn("Exit", self.exit_application).pack(pady=15)
+
         # ─────────────────────────────
         # OUTPUT BOX (RIGHT PANEL)
         # ─────────────────────────────
@@ -110,9 +116,10 @@ class MainWindow:
     # ─────────────────────────────
     # UTILITY
     # ─────────────────────────────
-    def log(self, text):
+    def log(self, text, level="info"):
         self.output.insert(tk.END, text + "\n")
         self.output.see(tk.END)
+        write_log(text, level)
 
     def set_status(self, text):
         self.status.config(text=f"STATUS: {text}")
@@ -220,7 +227,7 @@ class MainWindow:
             f.write(b"\x00")
 
         self.set_status("MBR CORRUPTED")
-        self.log("[!] MBR corrupted (simulation)")
+        self.log("[!] MBR corrupted (simulation)", level="warning")
 
     # corrupt MBR Partition Table (simulate)
     def corrupt_mbr_partition(self):
@@ -233,7 +240,7 @@ class MainWindow:
             f.write(b"\x00" * 64)
 
         self.set_status("MBR PARTITION TABLE CORRUPTED")
-        self.log("[!] MBR partition table corrupted (simulation)")
+        self.log("[!] MBR partition table corrupted (simulation)", level="warning")
 
     # Corrupt GPT Partition Table (simulate)
     def corrupt_gpt(self):
@@ -246,7 +253,7 @@ class MainWindow:
             f.write(b"\x00" * 512)  # corrupt first 512 bytes of partition entries
 
         self.set_status("GPT PARTITION TABLE CORRUPTED")
-        self.log("[!] GPT partition table corrupted (simulation)")
+        self.log("[!] GPT partition table corrupted (simulation)", level="warning")
 
     # ─────────────────────────────
     # RECOVERY
@@ -255,7 +262,7 @@ class MainWindow:
         clean = filedialog.askopenfilename(title="Select CLEAN MBR")
         if clean:
             result = recover_mbr(self.image_path, clean)
-            self.log("\n[RECOVERY] " + result["message"])
+            self.log("\n[RECOVERY] " + result["message"], level="info")
             self.set_status("RECOVERY DONE")
 
     # ─────────────────────────────
@@ -298,3 +305,8 @@ class MainWindow:
             self.set_status("GPT PARTITION RECOVERED")
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    def exit_application(self):
+        self.set_status("EXITING")
+        self.log("[*] Application closed by user")
+        self.root.quit()
