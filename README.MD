@@ -5,7 +5,7 @@ A Python-based digital forensics utility for reading, verifying, parsing, and re
 
 ---
 
-1\. Tool Overview
+1\. 🔍Tool Overview
 ----------------------
 
 This tool provides raw sector-level access to disk structures critical in forensicinvestigations — including the Master Boot Record (MBR), Primary GPT Header, and Backup GPT Header.
@@ -32,7 +32,7 @@ The modification is just simulated for demonstration purposes.
 
 ---
 
-2\. Installation Instructions
+2\. ⚙️Installation Instructions
 -----------------------------
 
 **Step 1 — Install Python 3.10 or higher**
@@ -53,31 +53,37 @@ python --version
    │   ├── gpt_parser.py
    │   ├── integrity_checker.py
    │   ├── recovery.py
+   |   └── log.py
    ├── generated_reports/
-   │   ├── .... (all reports created stored here)
+   │   ├── .... (all reports created - stored here)
    ├── GUI/
    │   └── main_window.py
    ├── images/  
    │   ├── clean_mbr.vhd  # for recovery purposes
    │   ├── mbr_test.vhd  
    │   ├── gpt_test.vhd  
-   │   └── README_IMAGES.txt  
+   │   └── README_IMAGES.txt 
+   ├── logs/
+   |   └── log.txt
    ├── tests/  
    │   ├── test_disk_reader.py  
-   |   ├── ......pys
+   |   ├── ......py's
    │   └── test_run_parser.py  
    └── main.py  
 ```
 
 **Step 3 — Load forensic images or VHD disks**
-**IMP**: Place all .001 image segments or mounted VHD disk files inside images/.
+**IMP**: Place all .001 image segments or mounted VHD disk files inside images/, and make sure to keep a clean backup of mbr_test.vhd (naming convention accordingly) for backup purposes of MBR boot code and MBR partition table.
 
-**Step 4 — No external libraries required**
-Only Python standard library is used.
+**Step 4 — External libraries required**
+```
+1. reportlab (for PDF report generation)
+```
+Rest all are Python's standard libraries.
 
 ---
 
-3\. Dependencies and Prerequisites
+3\. ⚠️Dependencies and Prerequisites
 ----------------------------------
 No external dependencies are required. It relies entirely on the following
 Python standard library modules which come pre-installed with Python:
@@ -85,7 +91,7 @@ Python standard library modules which come pre-installed with Python:
 - `sys` — platform detection for live disk access
 - `glob` — segment file discovery
 - `struct` — reserved for binary parsing extensions
-    
+- `ReportLab` — used for report generation
 
 **Requirements:**
  - Python 3.10+
@@ -94,72 +100,79 @@ Python standard library modules which come pre-installed with Python:
     
 ---
 
-4\. Execution Steps
+4\. 🛠️Execution Steps
 -------------------
-**Running the test suite (recommended first step):**
+## **Running the test suite (recommended first step):**
 
-```
-cd DFProject
-python tests/test_disk_reader.py
+```python
+      cd <folder_name>
+      python tests/test_disk_reader.py
 ```
 
 This will run six tests covering segment detection, MBR reading, GPT header reading,
 backup GPT reading, live disk access, and error handling. All results are printed
 with PASS/FAIL indicators.
 
-**Using the module in code:**
+ - **Using the module in code:**
 
 ```python
-from core.disk_reader import read_mbr_from_image
+      from core.disk_reader import read_mbr_from_image
 
-mbr = read_mbr_from_image("images/clean_mbr.001")
-# mbr is exactly 512 raw bytes
+      mbr = read_mbr_from_image("images/<image_file_name.***>")
+      # mbr is exactly 512 raw bytes
 ```
 
-**Live disk access on Windows (must run PowerShell as Administrator):**
+ - **Live disk access on Windows (must run PowerShell as Administrator):**
 
 ```python
-from core.disk_reader import read_mbr_from_live
+      from core.disk_reader import read_mbr_from_live
 
-mbr = read_mbr_from_live(drive_number=0)
-# 0 = PhysicalDrive0, 1 = PhysicalDrive1, and so on
+      mbr = read_mbr_from_live(drive_number=0)
+      # 0 = PhysicalDrive0, 1 = PhysicalDrive1, and so on
 ```
 
-**Getting image metadata:**
+ - **Getting image metadata:**
 
 ```python
-from core.disk_reader import get_image_info
+      from core.disk_reader import get_image_info
 
-info = get_image_info("images/clean_mbr.001")
-# Returns total size, sector count, segment list, and split flag
+      info = get_image_info("images/clean_mbr.001")
+      # Returns total size, sector count, segment list, and split flag
 ```
 
-**Run full integration test:**
+## **Run full integration test:**
 ```   
-python tests/test_run_parser.py   
+      python tests/test_run_parser.py   
 ```
 
-**Read MBR:**
+ - **Read MBR:**
 ```python
-from core.disk_reader 
-import read_mbr_from_imagembr = read_mbr_from_image("images/mbr_test.vhd")   
+      from core.disk_reader 
+      import read_mbr_from_imagembr = read_mbr_from_image("images/mbr_test.vhd")   
 ```
 
-**Parse MBR:**
+ - **Parse MBR:**
 ```python
-from core.mbr_parser 
-import parse_partition_tablepartitions = parse_partition_table(mbr)   
+      from core.mbr_parser 
+      import parse_partition_tablepartitions = parse_partition_table(mbr)   
 ```
 
-**Parse GPT:**
+ - **Parse GPT:**
 ```python
-from core.gpt_parser 
-import parse_gpt_headergpt_info = parse_gpt_header(gpt_bytes)   
+      from core.gpt_parser 
+      import parse_gpt_headergpt_info = parse_gpt_header(gpt_bytes)   
 ```
+
+## ***>>> 🚧 Finally Running the Tool : :***
+In terminal, run
+```python
+       python main.py
+```
+inside the main folder. This file has capability to call the GUI/main_window.py which further calls other required functions from core/'s components.
 
 ---
 
-5\. Platform Compatibility
+5\. 🖥️Platform Compatibility
 --------------------------
 
 ### Windows 10 / 11
@@ -175,8 +188,56 @@ import parse_gpt_headergpt_info = parse_gpt_header(gpt_bytes)
 ❌ Live disk reading module disabled
 
 ---
+6\. ✨Features
+-----------------
+🔹 **Raw Sector-Level Disk Access**\
+Reads 512-byte sectors directly from forensic images (.dd, .img, .vhd, split .001–.00N) and live physical disks (Windows PhysicalDrive). Ensures strict raw byte acquisition without modification.
 
-6\. Troubleshooting
+🔹 **MBR Structure Parsing**\
+Extracts and structures the 440-byte boot code, disk signature, 4 partition entries (16 bytes each), and validates boot signature (0x55AA).
+
+🔹 **GPT Header Parsing**\
+Parses primary GPT header fields including signature ("EFI PART"), revision, header size, CRC32 field, current/backup LBAs, and partition entry metadata.
+
+🔹 **Partition Table Parsing (MBR & GPT)**\
+Decodes partition entries into structured forensic dictionaries including type, start LBA, size, GUIDs, and partition names.
+
+🔹 **SHA-256 Integrity Verification**\
+Generates and compares cryptographic hashes for:
+ - MBR boot code
+ - MBR partition table
+ - GPT partition entry array\
+Detects unauthorized modification or corruption.
+
+🔹 **GPT Primary vs Backup Validation**\
+Compares primary GPT partition table with backup GPT partition table to detect tampering or structural inconsistencies.
+
+🔹 **Corruption Simulation Module**\
+Allows controlled corruption of:
+ - MBR boot code
+ - MBR partition table
+ - GPT partition table\
+Used for forensic testing and demonstration purposes.
+
+🔹 **MBR Recovery**\
+Using a clean reference image, restores corrupted:
+ - Boot code (440 bytes)
+ - Partition table (64 bytes)
+
+🔹 **GPT Partition Table Recovery**\
+Recovers corrupted primary GPT partition table directly from the backup GPT partition table stored at the end of the disk.
+
+🔹 **GUI-Based Forensic Dashboard**\
+Interactive Tkinter-based interface for loading images, running integrity checks, performing recovery, and visualizing forensic results.
+
+🔹 **Automated PDF Report Generation**\
+Generates structured forensic reports including integrity status, hashes, partition details, and final system verdict.
+
+🔹 **Persistent Logging System**\
+All dashboard actions and integrity results are saved to a log file for forensic traceability and audit documentation.
+
+---
+7\. 🆘Troubleshooting
 -----------------------
 
 **`FileNotFoundError` when running the test**
@@ -210,9 +271,9 @@ rename them to follow this pattern or pass each path manually.
 
 ---
 
-7\. Team Members
+8\. 🤝Team Members
 -----------------------
-Syeda Shanzay Shah 23I-2016\
-Sarita Sangrez 23I-2088\
-Rumaisah Haroon 23I-2106\
-Fatima Naeem 23I-2046
+***1. Syeda Shanzay Shah 23I-2016\
+2. Sarita Sangrez 23I-2088\
+3. Rumaisah Haroon 23I-2106\
+4. Fatima Naeem 23I-2046***
